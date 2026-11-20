@@ -1,0 +1,865 @@
+:root {
+  --paper: #f7f4ee;
+  --card: #ffffff;
+  --ink: #1b2330;
+  --muted: #5c6878;
+  --faint: #8b95a4;
+  --line: #e4ded3;
+  --line-strong: #cfc7b9;
+  --red: #b42318;
+  --red-soft: #fdecea;
+  --red-line: #e6b8b3;
+  --green: #146c43;
+  --green-soft: #e8f6ec;
+  --green-line: #aad8bc;
+  --gold: #9a5b13;
+  --gold-soft: #fdf3e3;
+  --gold-line: #e8cfa6;
+  --blue: #1f4e79;
+  --blue-soft: #eef4fa;
+  --blue-line: #b9cde0;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(28, 36, 48, 0.05), 0 8px 24px -16px rgba(28, 36, 48, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 500; }
+p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+
+.shell { max-width: 1160px; margin: 0 auto; padding: 28px 24px 56px; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.grow { flex: 1 1 auto; }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+.small { font-size: 12px; }
+.tiny { font-size: 11px; }
+.mono { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+.center { text-align: center; }
+
+.display {
+  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", Georgia, serif;
+  letter-spacing: 0.02em;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.06s;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: #faf8f4; border-color: #b9b0a0; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #2b3648; border-color: #2b3648; }
+.btn-red { background: var(--red-soft); border-color: var(--red-line); color: var(--red); }
+.btn-green { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
+.btn-gold { background: var(--gold-soft); border-color: var(--gold-line); color: var(--gold); }
+.btn-block { width: 100%; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+}
+.pill-red { background: var(--red-soft); border-color: var(--red-line); color: var(--red); }
+.pill-green { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
+.pill-gold { background: var(--gold-soft); border-color: var(--gold-line); color: var(--gold); }
+.pill-blue { background: var(--blue-soft); border-color: var(--blue-line); color: var(--blue); }
+
+.input {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  outline: none;
+}
+.input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.12); }
+
+.divider { height: 1px; background: var(--line); margin: 4px 0; }
+
+/* ---------- landing ---------- */
+.landing { min-height: 100vh; display: grid; place-items: center; padding: 32px 20px; }
+.landing-card { width: min(620px, 100%); }
+.brand-mark {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--ink); color: #f7f4ee;
+  display: grid; place-items: center; font-size: 22px;
+  font-family: "Songti SC", serif;
+}
+
+/* ---------- 房间大厅（落地页的房间列表） ---------- */
+/* 一行一间房：房号 / 阶段+人数+题库+选手 / 进入。整行是按钮，点哪儿都能进。
+   列表限高 300px：房间多了滚动，别把「创建房间」和昵称挤出首屏。 */
+.lobby-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 300px;
+  overflow: auto;
+  padding: 1px;
+}
+.lobby-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.lobby-row:hover { border-color: var(--blue-line); background: #fcfbf8; }
+.lobby-row:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.lobby-row.is-self { border-color: var(--blue-line); background: var(--blue-soft); }
+.lobby-code { font-size: 15px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink); }
+.lobby-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lobby-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+/* 两段都要能截断：题库名可能很长（用户上传的文件名），选手名也可能四个都长 */
+.lobby-sub { display: flex; align-items: baseline; gap: 8px; min-width: 0; font-size: 11px; color: var(--muted); }
+.lobby-bank { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 「未导入题库」这几个字不许折：390px 下它曾被压成「未导入题 / 库」两行 */
+.lobby-none { flex: 0 0 auto; white-space: nowrap; }
+.lobby-players { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobby-go {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--blue);
+  border: 1px solid var(--blue-line);
+  background: var(--blue-soft);
+  border-radius: 8px;
+  padding: 3px 10px;
+}
+
+/* ---------- lobby ---------- */
+.seats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.seat {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  display: flex; flex-direction: column; gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.seat:hover { border-color: var(--line-strong); }
+.seat.is-mine { border-color: var(--blue); background: var(--blue-soft); }
+.seat-name { font-size: 15px; font-weight: 500; }
+.seat-empty { color: var(--faint); font-size: 13px; }
+
+/* ---------- table ---------- */
+.table-grid { display: grid; grid-template-columns: minmax(0, 1fr) 344px; gap: 20px; align-items: start; }
+@media (max-width: 980px) { .table-grid { grid-template-columns: 1fr; } .seats { grid-template-columns: 1fr; } }
+
+.topbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+
+.board-wrap { padding: 8px; }
+.board-svg { width: 100%; height: auto; display: block; }
+.hex { transition: fill 0.15s, stroke 0.15s; }
+.hex-selectable { cursor: pointer; }
+.hex-selectable:hover { filter: brightness(0.97); }
+
+.panel { display: flex; flex-direction: column; gap: 14px; }
+/* 右栏 = 作答面板 + 次要卡片（题库 / 战况）。分两块只为手机端排序，桌面上仍是同一列 */
+.room-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel-more { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.timer-track { height: 5px; border-radius: 999px; background: #eee8dd; overflow: hidden; }
+.timer-fill { height: 100%; background: var(--ink); transition: width 0.2s linear; }
+.timer-fill.is-warn { background: var(--red); }
+
+.turn-title { font-size: 17px; font-weight: 500; }
+
+/* ---- 作答卡：头部一行搞定 ---- */
+/* 以前「阶段名 + 倒计时」一行、「代号 + 首字/字数」两个胶囊又一行，输入框上方凭空多出 ~70px。
+   现在合成一行：代号 + 首字/字数 + 阶段 ……… 倒计时；行动标题自己就写着「哪一方、做什么」，不再重复。 */
+.act-card { gap: 10px; }
+.act-head { gap: 8px; }
+.act-head-left { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.act-code {
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 0 7px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #f3efe7;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.act-card .turn-title { font-size: 15px; }
+
+.word-card {
+  border: 1px dashed var(--gold-line);
+  background: var(--gold-soft);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.word-main { font-size: 26px; letter-spacing: 0.08em; font-family: "Songti SC", serif; }
+.word-py { color: var(--gold); font-size: 12px; letter-spacing: 0.06em; }
+
+.log { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow: auto; }
+.log-item { font-size: 12px; color: var(--muted); }
+.log-item:first-child { color: var(--ink); }
+
+.budget { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.budget-dot { width: 10px; height: 10px; border-radius: 3px; border: 1px solid var(--line-strong); background: #fff; }
+.budget-dot.used { background: #d6d0c6; border-color: #c3bbaf; }
+
+/* 开发者代打：先选一个席位，再像真人一样操作它 */
+.dev-seats { display: flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.dev-seat {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11.5px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.dev-seat:hover { background: #f5f1e9; }
+.dev-seat.is-on { background: var(--ink); color: #fff; }
+.dev-seat.is-red.is-on { background: var(--red); }
+.dev-seat.is-green.is-on { background: var(--green); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px;
+  font-size: 13px; box-shadow: 0 12px 30px -12px rgba(0,0,0,0.5); z-index: 50;
+}
+
+.result-big { font-size: 22px; font-weight: 500; }
+
+.vote-chip { font-size: 12px; color: var(--gold); }
+
+/* ---------- 席位条 ---------- */
+.roster { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 700px) { .roster { grid-template-columns: 1fr 1fr; } }
+
+.roster-seat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+}
+.roster-seat.is-mine { background: var(--blue-soft); }
+/* 队伍色点：取代左侧强调线，与文字标签并存，不单靠颜色传达信息 */
+.seat-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
+.seat-dot.is-red { background: var(--red); }
+.seat-dot.is-green { background: var(--green); }
+.roster-team { display: inline-flex; align-items: center; gap: 5px; }
+/* 手机上用的单字角色标记（描 / 猜），桌面一律显示全称 */
+.roster-role-short { display: none; }
+
+/* ---------- 行动中的席位：必须一眼看出来 ---------- */
+.roster-seat.is-active {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  animation: seatPulse 1.4s ease-in-out infinite;
+}
+.roster-seat.is-active .roster-name { font-weight: 600; }
+@keyframes seatPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.3), 0 8px 18px -10px rgba(31, 78, 121, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(31, 78, 121, 0.04), 0 8px 18px -10px rgba(31, 78, 121, 0.12);
+  }
+}
+
+.acting {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.acting.is-mine { background: var(--gold); }
+.acting-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  animation: dotBlink 1s ease-in-out infinite;
+}
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(0.55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roster-seat.is-active { animation: none; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.18); }
+  .acting-dot { animation: none; }
+}
+
+.roster-seat.is-claimable { cursor: pointer; border-style: dashed; }
+.roster-seat.is-claimable:hover { background: #faf8f4; border-color: var(--blue-line); }
+.roster-name { font-size: 14px; font-weight: 500; }
+
+/* ---------- 描述与公开记录 ---------- */
+.desc-input {
+  text-align: center;
+  font-size: 26px;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  padding: 12px;
+}
+.desc-error { color: var(--red); }
+
+.clue {
+  font-family: "Songti SC", "Source Han Serif SC", serif;
+  letter-spacing: 0.2em;
+}
+.desc-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.desc-bubble {
+  border: 1px dashed var(--blue-line);
+  background: var(--blue-soft);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.desc-bubble .clue { font-size: 26px; line-height: 1.5; }
+
+.spec-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* 观众猜词：一条虚线把自己和选手的行动区分开，别让人误以为这是自己的回合 */
+.spec-guess {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+}
+.spec-guess-hint { font-size: 12px; }
+.spec-guess-hint.is-hit { color: var(--green); }
+.spec-guess-hint.is-miss { color: var(--muted); }
+/* 输入框默认 width:100%，在 flex 行里要允许它缩到比 placeholder 更窄，否则 390px 下会把按钮挤出去 */
+.spec-guess .input { min-width: 0; }
+
+.hex-current { filter: drop-shadow(0 0 6px rgba(201, 138, 43, 0.35)); }
+
+
+/* ================= 单页房间（棋盘即入口） ================= */
+/* 右栏固定 360，剩下的宽度全给棋盘——席位卡已经浮在棋盘里，不再需要额外宽度补偿 */
+.shell-room { max-width: 1456px; }
+
+.room-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+/* 左列 = 棋盘 + 对局历史，自己一列排下去。
+   历史不能再放进「下一行栅格」：那一行的高度由更高的右栏（结果 / 题库 / 战况）决定，
+   棋盘比右栏矮多少，棋盘下面就空多少。 */
+.room-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+@media (max-width: 1120px) {
+  .room-grid { grid-template-columns: minmax(0, 1fr); }
+  /* 单列时两栏都拆开，用 order 排出「棋盘 → 作答 → 对局历史 → 题库/战况」：
+     作答是每回合都要用的，历史是随时要回看的，题库和战况（内容与历史重叠）压到最后。 */
+  .room-main, .room-side { display: contents; }
+  .room-grid .board-card { order: 1; }
+  .room-grid .panel { order: 2; }
+  .room-grid .rec-card { order: 3; }
+  .room-grid .panel-more { order: 4; }
+}
+
+.board-card { padding: 12px; }
+
+/* 胜利条件：棋盘正下方一行小字。放在 .board-area 之外，不参与席位卡的定位计算；
+   var(--muted) 在 #fff 上是 5.67:1，11px 小字也过 WCAG AA。 */
+.board-hint {
+  margin: -2px 0 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ---------- 席位卡浮在棋盘两侧的空白上 ---------- */
+/* 蜂巢棋盘是斜的平行四边形：左上角、右下角各有一块三角形空地。
+   席位卡绝对定位叠在那两块空地上（不占网格列），棋盘才能拿满整个卡片宽度。
+   几何约束：卡片宽 112px 必须小于第 3 行最左六边形的 102(viewBox 单位) × 缩放比，
+   即棋盘宽 ≥ 730px；再窄就交给下面的容器查询折返到棋盘下方。 */
+.board-card { container-type: inline-size; }
+.board-area {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.seat-rail {
+  position: absolute;
+  z-index: 2;
+  width: 112px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 左上宽、右下宽：两队各贴一块最宽的空地，正好不浪费。
+   偏移量跟着棋盘宽度走：棋盘越宽，左上角那块三角越大，卡片就能越往中间靠。
+   15.34% 是第 3 行最左六边形的比例位置（102/665），减掉 126 = 卡片宽 112 + 12px 呼吸位。 */
+.seat-rail[data-rail="RED"] { top: 0; left: max(0px, calc(15.34% - 126px)); }
+.seat-rail[data-rail="GREEN"] { bottom: 0; right: max(0px, calc(15.34% - 126px)); }
+.board-mid { min-width: 0; }
+/* 栏变窄了：卡片跟着收紧，名字仍要能折行不撑破 */
+.seat-rail .roster-seat { min-width: 0; padding: 7px 9px; }
+.seat-rail .roster-name { font-size: 13px; overflow-wrap: anywhere; }
+
+/* 棋盘卡片不够宽时浮不住两列席位：棋盘在上，四席两两排在下面。
+   用容器查询而不是视口查询——右侧还有 360px 面板，视口宽度算不准棋盘的宽度。 */
+@container (max-width: 800px) {
+  .board-mid { order: -1; }
+  .seat-rail { position: static; width: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+
+/* 手机宽度（棋盘 270~400px）角落只剩几十像素，但也不能把四张卡塞到棋盘下面——
+   那样棋盘、输入区、对局历史要往下滚一大截才看得全。此时席位卡退化成一行字：
+   「● 描 宁」，叠在左上 / 右下那块三角空地上。
+   lobby 阶段卡片要带准备按钮，放不进去，所以只有开局后才用（`.seats-compact`）。
+   实测（390 视口，棋盘 300px）：左上第一行空地 90px、第二行 70px；两行字叠起来高 35px，
+   只吃第一行，宽度上限 90px，实际卡片 ~78px。 */
+@container (max-width: 800px) {
+  .board-card.seats-compact .seat-rail {
+    position: absolute;
+    width: auto;
+    /* 上限取 90px 与 29% 的小者：29% 是左上第一行空地占棋盘宽的比例（199/665），
+       小屏（320）棋盘只有 274px 时靠百分比自动收窄，否则会压到六边形 */
+    max-width: min(90px, 29%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .board-card.seats-compact .seat-rail[data-rail="RED"] { top: 2px; left: 0; }
+  .board-card.seats-compact .seat-rail[data-rail="GREEN"] { bottom: 2px; right: 0; }
+  .board-card.seats-compact .roster-seat {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    /* 行高压到 14px 左右是关键：两颗卡片叠起来必须落在一行六边形的高度内（约 37px @360），
+       否则会伸进第二行，而第二行左上只剩 73px，卡片就压到六边形上了。 */
+    padding: 0 4px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 7px;
+  }
+  /* 行动中的席位仍然要一眼看出来，但换成一条淡淡的高亮，不做整卡脉冲 */
+  .board-card.seats-compact .roster-seat.is-active {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(31, 78, 121, 0.35);
+    animation: none;
+  }
+  .board-card.seats-compact .roster-team-long { display: none; }
+  .board-card.seats-compact .roster-team { line-height: 1; font-size: 10px; }
+  .board-card.seats-compact .roster-role-short { display: inline; font-size: 10px; }
+  .board-card.seats-compact .roster-name {
+    font-size: 11px;
+    line-height: 1.1;
+    max-width: 62px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* 视觉上只有 14px 高，但命中区撑到 24px（WCAG 2.2 SC 2.5.8 的最小触控目标）：
+     两颗卡片的命中区只重叠 2px，不会抢彼此的点击 */
+  .board-card.seats-compact .roster-seat::after {
+    content: '';
+    position: absolute;
+    inset: -5px -4px;
+  }
+  /* 准备状态 / 行动中这些标签在角上放不下：行动中已由浅色高亮表示，lobby 用的是大卡片 */
+  .board-card.seats-compact .roster-tags { display: none; }
+}
+.board-stage { position: relative; }
+.board-veil {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(247, 244, 238, 0.66);
+  border-radius: 12px;
+}
+.board-veil-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 30px;
+  border-radius: 14px;
+  border: 1px dashed var(--line-strong);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.board-veil-card strong { font-size: 16px; font-weight: 600; }
+
+/* 席位条补充 */
+.roster-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; min-height: 22px; }
+.seat-empty-hint { color: var(--blue); }
+.room-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: -4px 0 14px;
+  padding: 0 2px;
+}
+/* 玩家名单文字：display 写在样式表里，手机端才能整行隐藏（内联 display 会盖掉媒体查询） */
+.room-sub-names { display: inline-flex; }
+
+/* 暂停 */
+.pause-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+}
+.timer-fill.is-paused { background: var(--gold); }
+
+/* 开局前检查表 */
+.checklist { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.checklist .is-ok { color: var(--green); }
+
+/* 开局前的规则设定（启用抢答）：和检查表同一层级，看起来像一条规则而不是按钮 */
+.rule-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfbf8;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+}
+.rule-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--gold); cursor: pointer; }
+.rule-check.is-locked { cursor: default; color: var(--muted); background: #f7f5f0; }
+.rule-check.is-locked input { cursor: default; }
+.rule-check-text { flex: 1 1 auto; }
+
+/* 昵称 */
+.nick-btn { gap: 8px; padding: 6px 12px; }
+.nick-name { font-weight: 500; }
+.nick-input { width: 150px; padding: 6px 10px; }
+
+/* 题库提案 */
+.proposal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfbf8;
+}
+
+/* ================= 题库导入（明文词库的实时预览与校对） ================= */
+/* 分段切换：明文的编辑区与 .sbank 的密文区互斥，用同一块地方 */
+.seg {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #faf8f4;
+}
+.seg-btn {
+  flex: 1 1 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12.5px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.seg-btn:hover { color: var(--ink); }
+.seg-btn.is-on {
+  background: #fff;
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(28, 36, 48, 0.1);
+}
+
+/* 词表原文：可纵向拉高，一次看更多行 */
+.bank-src {
+  min-height: 84px;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* 识别结果：既是预览也是编辑器，一行一个词 */
+.bank-list {
+  max-height: 210px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfbf8;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.bank-row { display: flex; align-items: center; gap: 6px; }
+.bank-idx {
+  flex: 0 0 20px;
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+.bank-word {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 7px;
+  padding: 3px 7px;
+  font-size: 13px;
+}
+.bank-word:hover { border-color: var(--line); background: #fff; }
+.bank-word:focus {
+  outline: none;
+  border-color: var(--blue);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(31, 78, 121, 0.12);
+}
+.bank-del {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.bank-del:hover {
+  color: var(--red);
+  border-color: var(--red-line);
+  background: var(--red-soft);
+}
+/* 「别名 n」：词表里用 / 写出的其它写法。预览里只报个数（列窄），具体写法在 title 里 */
+.bank-alt {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  line-height: 1.5;
+  padding: 0 5px;
+  border-radius: 999px;
+  border: 1px solid var(--blue-line);
+  background: var(--blue-soft);
+  color: var(--blue);
+  cursor: help;
+}
+
+/* ================= 公开记录表（分行 + 表格） ================= */
+.rec-card { min-width: 0; }
+.rec-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 6px 4px 2px;
+}
+.rec-scroll { max-height: 460px; overflow: auto; min-width: 0; }
+.rec-table { display: flex; flex-direction: column; }
+.rec-head {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  padding: 4px 4px 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--faint);
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
+}
+.rec-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.rec-row:last-child { border-bottom: none; }
+.rec-row.is-live { background: #fdf9f0; }
+.rec-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cell-code {
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #f3efe7;
+}
+.owner-dot { width: 7px; height: 7px; border-radius: 50%; }
+.owner-dot.is-red { background: var(--red); }
+.owner-dot.is-green { background: var(--green); }
+
+.rec-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+
+/* 格子码与描述都用全局字体（body 的黑体栈）：记录行里混排等宽/宋体会显得像另一套界面 */
+.ev-desc {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+.ev-desc.is-red { color: var(--red); border-color: var(--red-line); background: var(--red-soft); }
+.ev-desc.is-green { color: var(--green); border-color: var(--green-line); background: var(--green-soft); }
+.ev-guess { font-size: 13px; font-weight: 500; }
+.ev-guess.is-red { color: var(--red); }
+.ev-guess.is-green { color: var(--green); }
+.ev-answer { font-size: 14px; font-weight: 500; }
+.ev-answer.is-red { color: var(--red); }
+.ev-answer.is-green { color: var(--green); }
+/* 超时/跳过也按阵营上色，不再用灰色吞掉信息 */
+.ev-note { font-size: 12px; color: var(--faint); }
+.ev-note.is-red { color: var(--red); }
+.ev-note.is-green { color: var(--green); }
+
+/* 行动中动效加强：更强的呼吸圈 + 徽章脉冲 */
+@keyframes seatPulseStrong {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(31, 78, 121, 0.32), 0 10px 22px -12px rgba(31, 78, 121, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 13px rgba(31, 78, 121, 0.05), 0 10px 22px -12px rgba(31, 78, 121, 0.15);
+  }
+}
+.roster-seat.is-active { animation: seatPulseStrong 1.15s ease-in-out infinite; }
+.roster-seat.is-active .acting { animation: badgePulse 1.15s ease-in-out infinite; }
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .roster-seat.is-active { animation: none; }
+  .roster-seat.is-active .acting { animation: none; }
+}
+
+/* ---------- 手机（≤720）：把「棋盘 / 输入区 / 对局历史」挤到一屏里 ---------- */
+/* 手机上一屏只有 700~800px 高，边距、卡片内边距、重复信息每一处都在抢空间。
+   实测 390 视口：改前 .shell 左右各 24px、卡片内边距 20px、玩家名单占一整行，
+   棋盘只有 300px 宽，整页 1905px 高。 */
+@media (max-width: 720px) {
+  .shell { padding: 12px 12px 40px; }
+  .topbar { gap: 6px; margin-bottom: 10px; }
+  /* 顶栏按钮在手机上收一档，让 7 个控件排成两行而不是三行 */
+  .topbar .btn, .topbar .pill { font-size: 12px; padding: 4px 8px; }
+  /* 玩家名单与「含观众」入口在顶栏已有同名按钮，离席也挪进了顶栏，整行都不需要了 */
+  .room-sub { display: none; }
+  .card { padding: 12px; }
+  .board-card { padding: 8px; }
+  .board-wrap { padding: 2px; }
+  .room-grid, .room-main { gap: 12px; }
+  .panel { gap: 10px; }
+  .rec-card { padding: 12px; }
+  .log { max-height: 150px; }
+
+  /* ---- 答题区 / 对局历史：手机上再压一档 ---- */
+  /* 一屏就 700~800px：卡片内边距 12→10、栈间距 16→8，结算标题 22→19；
+     这两块省下来的高度直接换成「对局历史多露两行」。 */
+  .panel > .card { padding: 10px; }
+  .panel > .card.stack { gap: 8px; }
+  .panel .divider { margin: 0; }
+  .panel .result-big { font-size: 19px; }
+  .panel .row-between { gap: 8px; }
+  /* 按钮 42 → 34px：换题/判对/撤回/重开各占一行，四行就是 30 多像素 */
+  .panel .btn { padding: 5px 12px; }
+
+  .rec-card { padding: 10px; gap: 10px; }
+  /* 图例 5 个标签在 390 视口会折成 2~3 行、吃掉 60px；11px + 窄内边距后正好一行 */
+  .rec-legend { gap: 4px 8px; padding: 2px 0 0; }
+  .rec-legend .ev-desc { font-size: 11px; padding: 0 7px; letter-spacing: 0.04em; }
+  .rec-legend .ev-guess, .rec-legend .ev-answer { font-size: 11px; }
+  /* 格子列 96→62px：把省下的 34px 让给过程记录，长描述少折一行 */
+  .rec-head { grid-template-columns: 62px minmax(0, 1fr); padding: 2px 0 4px; color: var(--muted); }
+  .rec-row { grid-template-columns: 62px minmax(0, 1fr); gap: 6px; padding: 7px 0; }
+  .cell-code { font-size: 12px; padding: 1px 6px; }
+  .rec-flow { gap: 4px 8px; }
+  .ev-desc { font-size: 12px; padding: 1px 8px; }
+  .ev-guess { font-size: 12px; }
+  .ev-answer { font-size: 13px; }
+  .ev-note { font-size: 11px; color: var(--muted); }
+}

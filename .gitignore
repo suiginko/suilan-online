@@ -1,0 +1,20 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dist-server/
+web/
+
+# 测试产物与临时文件
+shot/
+*.log
+.DS_Store
+
+# 运行时数据（房间快照）
+data/
+
+# 平台辅助与本地内部开发文件
+.workbuddy/
+*.genie
+ANTIGRAVITY.md
